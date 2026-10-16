@@ -85,7 +85,7 @@ async function askPhoneNumber() {
   }
   return new Promise((resolve) => {
     const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
-    rl.question('\n📱 Entrez votre numéro WhatsApp (avec indicatif pays, ex: numéro_sans_plus): ', (answer) => {
+    rl.question('\n📱 Entrez votre numéro WhatsApp (avec indicatif pays, ex: 22612345678): ', (answer) => {
       rl.close()
       resolve(answer.replace(/[^0-9]/g, ''))
     })
@@ -214,22 +214,61 @@ async function main() {
     try {
       const meta = await getGroupMeta(sock, id)
       const conf = (await import('./lib/groupConfig.js')).getGroupConfig(id)
+      const fsPromises = await import('node:fs/promises')
+      const pathModule = await import('node:path')
+      const dataDir = pathModule.join(process.cwd(), 'data')
+      const readGroupSettings = async (filename) => {
+        try { return JSON.parse(await fsPromises.readFile(pathModule.join(dataDir, filename), 'utf8'))[id] || {} }
+        catch { return {} }
+      }
+      const welcomeSettings = await readGroupSettings('welcome.json')
+      const goodbyeSettings = await readGroupSettings('goodbye.json')
+      const linkBlock = [
+        '━━━━━━━━━━━━━━━━━━',
+        '🔗 *REJOINS-NOUS*',
+        '✈️ Groupe Telegram : https://t.me/+kcLFkzePlwwyZjE8',
+        '📣 Chaîne Telegram : https://t.me/nexusforger',
+        `🤖 *LIEN POUR CONNECTER LE BOT* : ${process.env.BOT_CONNECT_LINK || '(à renseigner)'}`,
+        `🤖 *${config.botName}* • Développeur : *${config.developerName}*`,
+        `⚒️ Équipe : *${config.teamName}*`,
+        '',
+        '📢 *Voir la chaîne WhatsApp :* https://whatsapp.com/channel/0029VbCRcEJLdQeYxw5g3m2o'
+      ].join('\n')
 
       for (const jid of participants) {
         const num = cleanNumber(jid)
-        if (action === 'add' && conf.welcome) {
-          const welcomeMsg = conf.welcomeMsg ||
-            "╭━━━━━━━━━━━━━━━━━━━━━━╮\n" +
-            "┃  👋 *BIENVENUE !* 👋   ┃\n" +
-            "╰━━━━━━━━━━━━━━━━━━━━━━╯\n\n" +
-            "Bienvenue @" + num + " dans *" + (meta?.subject || 'ce groupe') + "* !\n" +
-            "👥 Membres: " + (meta?.participants?.length || '?') + "\n" +
-            "📜 Lisez les règles: *.rules*"
-          await sock.sendMessage(id, { text: welcomeMsg, mentions: [jid] })
+        if (action === 'add') {
+          const groupName = meta?.subject || 'ce groupe'
+          const template = welcomeSettings.message || conf.welcomeMsg || '🎉 Bienvenue {name} dans *{group}* !\n👥 Membres : {count}\n📜 Consulte les règles avec *.rules*.'
+          const welcomeMsg = String(template)
+            .replace(/\{name\}/g, '@' + num)
+            .replace(/\{group\}/g, groupName)
+            .replace(/\{count\}/g, String(meta?.participants?.length || '?'))
+          const caption = `${welcomeMsg}\n\n${linkBlock}`
+          const imagePath = pathModule.join(process.cwd(), 'assets', 'jarvis-command.jpg')
+          try {
+            const image = await fsPromises.readFile(imagePath)
+            await sock.sendMessage(id, { image, caption, mentions: [jid] })
+          } catch (imageError) {
+            console.error('[WELCOME] Image indisponible :', imageError.message)
+            await sock.sendMessage(id, { text: caption, mentions: [jid] })
+          }
         }
-        if (action === 'remove' && conf.goodbye) {
-          const goodbyeMsg = conf.goodbyeMsg || "👋 @" + num + " a quitté le groupe. Au revoir !"
-          await sock.sendMessage(id, { text: goodbyeMsg, mentions: [jid] })
+        if (action === 'remove') {
+          const groupName = meta?.subject || 'ce groupe'
+          const template = goodbyeSettings.message || conf.goodbyeMsg || '👋 Au revoir {name} ! Tu nous manqueras dans *{group}*.'
+          const goodbyeMsg = String(template)
+            .replace(/\{name\}/g, '@' + num)
+            .replace(/\{group\}/g, groupName)
+          const caption = `${goodbyeMsg}\n\n${linkBlock}`
+          const imagePath = pathModule.join(process.cwd(), 'assets', 'jarvis-command.jpg')
+          try {
+            const image = await fsPromises.readFile(imagePath)
+            await sock.sendMessage(id, { image, caption, mentions: [jid] })
+          } catch (imageError) {
+            console.error('[GOODBYE] Image indisponible :', imageError.message)
+            await sock.sendMessage(id, { text: caption, mentions: [jid] })
+          }
         }
         if (action === 'remove') {
           const anti = (await import('./lib/antipurgeTracker.js')).default

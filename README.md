@@ -40,8 +40,6 @@ chmod +x start.sh
 - `MODE` — public/private/group
 - `MAX_WARNS` — Warns avant expulsion (défaut: 3)
 
-⚠️ **Sécurité :** `.env.example` est un modèle sans valeurs secrètes. Ne publiez jamais votre vrai fichier `.env` ni le dossier `sessions/`. Pour un hébergement, ajoutez les valeurs secrètes dans les variables d’environnement du fournisseur.
-
 ## 🔑 Système de permissions
 
 - 👑 **Owner** — Accès total
@@ -102,3 +100,20 @@ Chaque utilisateur peut connecter son propre compte WhatsApp via un code de pair
 - ✅ Détection de session dupliquée
 - ✅ Restauration des sessions au redémarrage du bot
 - ✅ Bot principal non affecté
+
+
+## Configuration après extraction
+
+1. Copiez `.env.example` vers `.env`.
+2. Renseignez au minimum `OWNER_NUMBER` avec votre numéro WhatsApp sans le signe `+`.
+3. Ajoutez vos propres clés API si vous utilisez les fonctions IA correspondantes.
+4. Renseignez `BOT_CONNECT_LINK` lorsque votre lien de connexion sera prêt.
+5. Installez les dépendances avec `npm install`, puis lancez `npm start`.
+
+Ne partagez jamais `.env`, le dossier de session WhatsApp ou les fichiers de données runtime. L'archive de distribution ne contient pas le `.env` personnel ni les données JSON runtime.
+
+### Liens configurés
+
+- Groupe Telegram : https://t.me/+kcLFkzePlwwyZjE8
+- Chaîne Telegram : https://t.me/nexusforger
+- Chaîne WhatsApp : https://whatsapp.com/channel/0029VbCRcEJLdQeYxw5g3m2o

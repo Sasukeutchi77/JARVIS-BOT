@@ -27,7 +27,12 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "keywords": ["whatsapp", "bot", "baileys", "jarvis"],
-  "author": "𝑴𝑼𝑹𝑨𝑺𝑨𝑲𝑰 𝐒𝐒𝐊 𓂀",
+  "keywords": [
+    "whatsapp",
+    "bot",
+    "baileys",
+    "jarvis"
+  ],
+  "author": "𝐋𝐎𝐑𝐃 𝐃𝐄𝐌𝐎𝐍 • 𝐍𝐄𝐗𝐔𝐒-𝐅𝐎𝐑𝐆𝐄𝐑",
   "license": "MIT"
 }

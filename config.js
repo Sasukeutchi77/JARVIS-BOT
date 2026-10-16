@@ -47,7 +47,7 @@ if (!primaryOwnerRaw || !primaryOwnerRaw.replace(/\D/g, "")) {
   console.error("║  → Ouvrez votre fichier .env                         ║")
   console.error("║  → Ajoutez ou corrigez la ligne :                    ║")
   console.error("║      OWNER_NUMBER=votre_numero_sans_plus             ║")
-  console.error("║  Exemple : OWNER_NUMBER=226XXXXXXXX                 ║")
+  console.error("║  Exemple : OWNER_NUMBER=22653718750                  ║")
   console.error("╚══════════════════════════════════════════════════════╝")
   console.error("")
   process.exit(1)
@@ -70,7 +70,9 @@ export const config = {
 
   // ── Paramètres généraux ──────────────────────────────
   prefix:  process.env.PREFIX   || ".",
-  botName: process.env.BOT_NAME || "𝐉.𝐀.𝐑.𝐕.𝐈.𝐒.",
+  botName: process.env.BOT_NAME || "𝐉.𝐀.𝐑.𝐕.𝐈.𝐒",
+  developerName: process.env.DEVELOPER_NAME || "𝐋𝐎𝐑𝐃 𝐃𝐄𝐌𝐎𝐍",
+  teamName: process.env.TEAM_NAME || "𝐍𝐄𝐗𝐔𝐒-𝐅𝐎𝐑𝐆𝐄𝐑",
   mode:    process.env.MODE     || "public",
 
   // ── Sudo pré-configurés depuis .env ──────────────────
